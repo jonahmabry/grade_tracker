@@ -1,5 +1,5 @@
+import datetime
 import requests
-from datetime import datetime, timedelta, timezone
 import os
 from dotenv import load_dotenv
 import pytz
@@ -14,6 +14,14 @@ DAYS_AHEAD = 7
 LOCAL_TZ = pytz.timezone("America/Chicago")
 
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
+
+today_date = datetime.datetime.now(LOCAL_TZ)
+start_of_week = today_date - datetime.timedelta(days=today_date.weekday() + 1) # Sunday
+end_of_week = start_of_week + datetime.timedelta(days=6) # Saturday
+
+# Format dates like 9/7 - 9/13
+week_range = f"{start_of_week.strftime('%-m/%-d')} - {end_of_week.strftime('%-m/%-d')}"
+print(f"Jonah's Grades {week_range}\n{'=' * 25}")
 
 
 # --- GETTING ACTIVE COURSES ---
@@ -37,6 +45,7 @@ icloud_path = os.path.expanduser(
 )
 
 with open(icloud_path, "w") as f:
+    f.write(f"Jonah's Grades {week_range}\n{'=' * 25}\n")
     for line in grades_list:
         f.write(line + "\n")
 
