@@ -25,8 +25,9 @@ filtered_courses = [course for course in courses if course["enrollment_term_id"]
 grades_list = []
 for course in filtered_courses:
     enrollment_data = requests.get(f"{BASE_URL}/courses/{course["id"]}/enrollments", headers=headers, params={"user_id": "4205893"}).json()
-    print(f"{course["name"]}: {enrollment_data[0]["grades"]["current_score"]}")
-    grades_list.append(f"{course['name']}|{enrollment_data[0]['grades']['current_score']}")
+    short_name = course["name"][:-16] # Removing the end of the course name (ex: from "MATH-1620-R10 (Fall 2025)" to "MATH-1620")
+    print(f"{short_name}: {enrollment_data[0]["grades"]["current_score"]}")
+    grades_list.append(f"{short_name}: {enrollment_data[0]['grades']['current_score']}")
 
 
 # --- SAVING GRADES TO "grades.txt" IN ICLOUD DRIVE/SHORTCUTS ---
