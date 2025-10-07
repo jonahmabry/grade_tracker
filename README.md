@@ -5,7 +5,8 @@
 #### 1. It uses a Canvas API to access your canvas account.
 #### 2. It then searches for your classes that you are currently enrolled in (In my case I have it set to Fall 2025)
 #### 3. After that, it finds your "current_grade" for each class and saves it to the Shortcuts folder inside your ICloud Drive
-#### 4. Inside your shortcut app on IOS, you can create a shortcut that sends the grades to your phone as a text message each week
+#### 4. It also calculates your GPA and saves it to the same folder
+#### 5. Inside your shortcut app on IOS, you can create a shortcut that sends the grades to your phone as a text message each week
 
 ## How to Run it:
 #### 1. Clone the repository:
