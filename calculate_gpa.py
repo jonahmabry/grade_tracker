@@ -1,5 +1,5 @@
-# Turning the course grade into a gpa
 def grade_to_gpa(grade):
+    """Turning the course grade into a gpa"""
     if grade >= 93: return 4.0   # A
     elif grade >= 90: return 3.7 # A-
     elif grade >= 87: return 3.3 # B+
@@ -13,30 +13,25 @@ def grade_to_gpa(grade):
     elif grade >= 60: return 0.7 # D-
     else: return 0.0             # F
 
-def calculate_gpa(grades_list):
-    total_points = 0
-    total_hours = 0
+CREDIT_HOURS = {
+    "BUSI-1010": 1,
+    "ENGR-1110": 2,
+    "COMP-1210": 3,
+    "ENGL-1120": 3,
+    "BUAL-2600": 3,
+    "BUSI-1040": 3,
+    "CTCT-3250": 3,
+    "ECON-2020": 3,
+    "MUSI-2747": 3,
+    "MATH-1620": 4,
+    "PHYS-1600": 4,
+}
 
-    for course in grades_list:
-        # Assigning classes with credit hours and adding up total hours
-        match course:
-            case "ENGR-1110":
-                grades_list[course]['credit_hours'] = 2
-                total_hours += 2
-            case "COMP-1210" | "ENGL-1120":
-                grades_list[course]['credit_hours'] = 3
-                total_hours += 3
-            case "MATH-1620" | "PHYS-1600":
-                grades_list[course]['credit_hours'] = 4
-                total_hours += 4
-            case _:
-                grades_list[course]['credit_hours'] = 0
-
-        # Turning the class grade into a gpa and then calculating the total gpa
-        class_gpa = grade_to_gpa(grades_list[course]['grade'])
-        total_points += grades_list[course]['credit_hours'] * class_gpa
-
-    gpa = total_points / total_hours
-    print(f"GPA: {gpa}")
-
-    return gpa
+def calculate_gpa(current_grades):
+    """Assigning classes with credit hours and calculating the total gpa"""
+    total_points, total_hours = 0, 0
+    for course, current_grade in current_grades.items():
+        hours = CREDIT_HOURS.get(course, 0)
+        total_hours += hours
+        total_points += hours * grade_to_gpa(current_grade)
+    return total_points / total_hours if total_hours else 0
