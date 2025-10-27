@@ -23,11 +23,20 @@ headers = {"Authorization": f"Bearer {API_TOKEN}"}
 
 # --- WEEK RANGE ---
 today_date = datetime.datetime.now(pytz.timezone("America/Chicago"))
-start_of_week = today_date - datetime.timedelta(days=today_date.weekday() + 1) # Sunday
-end_of_week = start_of_week + datetime.timedelta(days=6) # Saturday
+
+# Compute start of week (Sunday)
+weekday = today_date.weekday()  # Monday=0 ... Sunday=6
+days_since_sunday = (weekday + 1) % 7
+start_of_week = today_date - datetime.timedelta(days=days_since_sunday)
+end_of_week = start_of_week + datetime.timedelta(days=6)
 
 week_key = f"{start_of_week.strftime('%Y-%m-%d')}_to_{end_of_week.strftime('%Y-%m-%d')}"
 week_range = f"{start_of_week.strftime('%-m/%-d')} - {end_of_week.strftime('%-m/%-d')}"
+
+# Previous calendar week (for “Since Last Week”)
+last_week_start = start_of_week - datetime.timedelta(days=7)
+last_week_end = end_of_week - datetime.timedelta(days=7)
+previous_week_key = f"{last_week_start.strftime('%Y-%m-%d')}_to_{last_week_end.strftime('%Y-%m-%d')}"
 
 
 # --- GET ACTIVE COURSES ---
@@ -53,11 +62,15 @@ else:
 
 
 # --- DETERMINE OLD DATA ---
-all_weeks = sorted(history.keys())
-previous_week_key = all_weeks[-1] if all_weeks else None
-previous_week_grades = history.get(previous_week_key, {})
-current_week_grades = history.get(week_key, previous_week_grades)
+def parse_week_key(key):
+    start_str = key.split("_to_")[0]
+    return datetime.datetime.strptime(start_str, "%Y-%m-%d")
 
+all_weeks_sorted = sorted(history.keys(), key=parse_week_key)
+
+previous_run_key = all_weeks_sorted[-1] if all_weeks_sorted else None
+previous_run_grades = history.get(previous_run_key, {})
+previous_week_grades = history.get(previous_week_key, {})
 
 # --- HELPER FUNCTIONS ---
 def find_diff(diff):
@@ -94,8 +107,8 @@ with open(ICLOUD_PATH, "w") as f:
     # Changes since last run
     print("Changes Since Last Run:")
     f.write("Changes Since Last Run:\n")
-    f.write(update_grades(current_week_grades, current_grades))
-    f.write(update_gpa(current_week_grades, current_grades))
+    f.write(update_grades(previous_run_grades, current_grades))
+    f.write(update_gpa(previous_run_grades, current_grades))
 
     # Changes since last week
     print("Changes Since Last Week:")

@@ -1,16 +1,9 @@
 def grade_to_gpa(grade):
     """Turning the course grade into a gpa"""
-    if grade >= 93: return 4.0   # A
-    elif grade >= 90: return 3.7 # A-
-    elif grade >= 87: return 3.3 # B+
-    elif grade >= 83: return 3.0 # B
-    elif grade >= 80: return 2.7 # B-
-    elif grade >= 77: return 2.3 # C+
-    elif grade >= 73: return 2.0 # C
-    elif grade >= 70: return 1.7 # C-
-    elif grade >= 67: return 1.3 # D+
-    elif grade >= 63: return 1.0 # D
-    elif grade >= 60: return 0.7 # D-
+    if grade >= 90: return 4.0   # A
+    elif grade >= 80: return 3.0 # B
+    elif grade >= 70: return 2.0 # C
+    elif grade >= 60: return 1.0 # D
     else: return 0.0             # F
 
 CREDIT_HOURS = {
