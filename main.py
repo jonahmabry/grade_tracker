@@ -15,7 +15,7 @@ API_TOKEN = os.environ.get("CANVAS_TOKEN")
 BASE_URL = "https://auburn.instructure.com/api/v1"
 ICLOUD_PATH = os.path.expanduser("/Users/jonahmabry/Library/Mobile Documents/iCloud~is~workflow~my~workflows/Documents/grades.txt")
 HISTORY_FILE = "grades_history.json"
-TERM_ID = 4407 # Fall 2025
+TERM_ID = 3945 # Spring 2026
 USER_ID = "4205893"
 
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
@@ -40,8 +40,15 @@ previous_week_key = f"{last_week_start.strftime('%Y-%m-%d')}_to_{last_week_end.s
 
 
 # --- GET ACTIVE COURSES ---
-courses = requests.get(f"{BASE_URL}/courses", headers=headers).json()
-filtered_courses = [course for course in courses if course["enrollment_term_id"] == TERM_ID]
+courses = requests.get(f"{BASE_URL}/courses?per_page=20", headers=headers).json()
+filtered_courses = [course for course in courses if course.get("enrollment_term_id") == TERM_ID]
+
+
+# --- FINDING CURRENT TERM ID ---
+"""
+for course in courses:
+    print(course["name"], course["enrollment_term_id"])
+"""
 
 
 # --- FETCH GRADES FROM CANVAS ---
@@ -49,8 +56,18 @@ current_grades = {}
 for course in filtered_courses:
     enrollment_data = requests.get(f"{BASE_URL}/courses/{course["id"]}/enrollments", headers=headers, params={"user_id": USER_ID}).json()
 
-    short_name = course["name"][:-16] # Removing the end of the course name (ex: from "MATH-1620-R10 (Fall 2025)" to "MATH-1620")
-    current_grades[short_name] = enrollment_data[0]['grades']['current_score']
+    short_name = course["name"][:9] # Only keeping the start of the course name (ex: from "MATH-2660-115 (Spring 2026)" to "MATH-1620")
+    grade = enrollment_data[0]['grades']['current_score']
+    current_grades[short_name] = grade if grade is not None else 0
+
+
+# --- PRINT CURRENT CLASSES ---
+"""
+for course in filtered_courses:
+    print(course["name"])
+    assignments = requests.get(f"{BASE_URL}/courses/{course["id"]}/assignments", headers=headers, params={"user_id": USER_ID}).json()
+    print(assignments[0]['name'])
+"""
 
 
 # --- LOAD HISTORY FILE ---
@@ -106,9 +123,8 @@ with open(ICLOUD_PATH, "w") as f:
 
     # Changes since last run
     print("Changes Since Last Run:")
-    f.write("Changes Since Last Run:\n")
-    f.write(update_grades(previous_run_grades, current_grades))
-    f.write(update_gpa(previous_run_grades, current_grades))
+    update_grades(previous_run_grades, current_grades)
+    update_gpa(previous_run_grades, current_grades)
 
     # Changes since last week
     print("Changes Since Last Week:")
