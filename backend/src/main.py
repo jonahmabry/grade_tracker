@@ -14,7 +14,7 @@ load_dotenv()
 API_TOKEN = os.environ.get("CANVAS_TOKEN")
 BASE_URL = "https://auburn.instructure.com/api/v1"
 ICLOUD_PATH = os.path.expanduser("/Users/jonahmabry/Library/Mobile Documents/iCloud~is~workflow~my~workflows/Documents/grades.txt")
-HISTORY_FILE = "grades_history.json"
+HISTORY_FILE = "../grades_history.json"
 TERM_ID = 3945 # Spring 2026
 USER_ID = "4205893"
 
