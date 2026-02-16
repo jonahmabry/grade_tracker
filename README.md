@@ -17,7 +17,6 @@
 
 #### 2. Set up the Python environment:
 ```bash
-cd backend
 uv sync
 source .venv/bin/activate
 ```
